@@ -1,4 +1,6 @@
 import { Resend } from 'resend'
+import { headers } from 'next/headers'
+import { checkAndRecordSend } from '@/lib/emailGuard'
 import { roleLevel } from '@/lib/framework'
 import { baseUrl } from '@/lib/site'
 import { BRAND } from '@/lib/brand'
@@ -17,6 +19,15 @@ import type { RoleLevelKey } from '@/lib/framework/types'
 
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+// Send limits (V2 decision D1): these senders run inside Server Actions,
+// which Next.js already origin-checks, so only the per-recipient / per-IP /
+// per-tool limits are applied here. A refused send is treated exactly like a
+// failed send: the copy-link fallbacks on the console still work.
+async function allowedToSend(recipient: string, tool: string): Promise<boolean> {
+  const result = await checkAndRecordSend({ tool, recipient, headers: await headers() })
+  return result.ok
 }
 
 function wrapper(title: string, bodyHtml: string): string {
@@ -84,18 +95,24 @@ export async function sendInviteEmails(args: {
 
   // Best-effort, independent of each other: one failing must not block the other.
   await Promise.allSettled([
-    resend.emails.send({
-      from,
-      to: args.subjectEmail,
-      subject: `Your leadership self-assessment: ${roleName}`,
-      html: selfHtml,
-    }),
-    resend.emails.send({
-      from,
-      to: args.creatorEmail,
-      subject: `Your assessment console: ${args.subjectName}`,
-      html: managerHtml,
-    }),
+    (async () => {
+      if (!(await allowedToSend(args.subjectEmail, 'wlea-invite'))) return
+      await resend.emails.send({
+        from,
+        to: args.subjectEmail,
+        subject: `Your leadership self-assessment: ${roleName}`,
+        html: selfHtml,
+      })
+    })(),
+    (async () => {
+      if (!(await allowedToSend(args.creatorEmail, 'wlea-invite'))) return
+      await resend.emails.send({
+        from,
+        to: args.creatorEmail,
+        subject: `Your assessment console: ${args.subjectName}`,
+        html: managerHtml,
+      })
+    })(),
   ])
 }
 
@@ -133,6 +150,7 @@ export async function sendRaterInvite(args: {
     <p style="margin:18px 0 0;font-size:12px;color:#9ca3af;">This link is private to you. Do not forward it.</p>`,
   )
 
+  if (!(await allowedToSend(args.raterEmail, 'wlea-invite'))) return
   await resend.emails.send({
     from,
     to: args.raterEmail,
@@ -171,6 +189,7 @@ export async function sendConsoleLinkRecovery(args: {
     <p style="margin:18px 0 0;font-size:12px;color:#9ca3af;">Keep this email. Each link is the only way back into that assessment.</p>`,
   )
 
+  if (!(await allowedToSend(args.toEmail, 'wlea-recovery'))) return
   await resend.emails.send({
     from,
     to: args.toEmail,
