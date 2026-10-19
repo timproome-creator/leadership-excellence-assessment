@@ -3,7 +3,7 @@
 // WLEA is the first module built on these shared types.
 // ────────────────────────────────────────────────────────────────
 
-export type RoleLevelKey = 'jpm' | 'pm' | 'dcm' | 'exec'
+export type RoleLevelKey = 'jpm' | 'pm' | 'dcm' | 'exec' | 'fm'
 
 export interface RoleLevel {
   key: RoleLevelKey

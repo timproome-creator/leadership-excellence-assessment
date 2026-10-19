@@ -38,6 +38,18 @@ export const ROLE_LEVELS: RoleLevel[] = [
     scope: 'The whole site. Integrates all functions; owns site performance.',
   },
   {
+    // Same rank as 'dcm' deliberately — a parallel function at the same
+    // seniority, not a rung between DC Manager and Executive. `rank` isn't
+    // read anywhere as a sort/comparison key today (checked before adding
+    // this), so a tie is safe; ROLE_LEVELS array order is what actually
+    // drives the role-picker's display order.
+    key: 'fm',
+    name: 'Facilities & Maintenance Manager',
+    shortName: 'Facilities Mgr',
+    rank: 3,
+    scope: 'The site’s buildings, plant, automation, security and fire compliance. Owns site risk and asset integrity.',
+  },
+  {
     key: 'exec',
     name: 'Executive',
     shortName: 'Executive',

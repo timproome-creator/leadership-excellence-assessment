@@ -42,6 +42,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Sets the ethical tone for the site; is consistently trusted by the management team and staff; addresses unfairness and unethical behaviour proactively.',
         target: 3,
       },
+      fm: {
+        text: 'Sets the ethical tone for how the site is maintained and secured; trusted by the management team and contractors alike; addresses unsafe shortcuts or compliance gaps proactively rather than covering them up.',
+        target: 3,
+      },
       exec: {
         text: 'Is a trusted figure across the business; embeds integrity into how the network operates; protects organisational values under pressure.',
         target: 3,
@@ -78,6 +82,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Holds the site steady through peak, disruption and crisis; models resilience for the management team; relentless about site performance.',
         target: 3,
       },
+      fm: {
+        text: 'Holds the site’s buildings, plant and security steady through breakdowns, emergencies and crises (fire, power failure, security incidents); remains composed and decisive under pressure; relentless about keeping the site safe and operational.',
+        target: 3,
+      },
       exec: {
         text: 'Maintains direction and composure through major business pressure and change; energises the organisation to perform under adversity.',
         target: 3,
@@ -112,6 +120,10 @@ export const COMPETENCIES: Competency[] = [
       },
       dcm: {
         text: 'Continuously develops own leadership and commercial capability; seeks external/industry learning; models a learning posture for the site.',
+        target: 3,
+      },
+      fm: {
+        text: 'Continuously develops technical knowledge of building systems, automation/mechanisation and fire/security regulation as they evolve; seeks external and industry learning; models a learning posture for the site.',
         target: 3,
       },
       exec: {
@@ -152,6 +164,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Commands the full DC operating model, from inbound to dispatch, inventory, labour, MHE, safety and cost, and how they interact across the site.',
         target: 3,
       },
+      fm: {
+        text: 'Commands the full facilities and maintenance operating model: building infrastructure, automation and mechanisation, security systems (guarding, CCTV, offsite monitoring) and fire prevention/certification, and how they interact with site operations.',
+        target: 3,
+      },
       exec: {
         text: 'Understands the wider supply-chain and network operating model; connects DC performance to logistics, planning, customer and cost outcomes.',
         target: 3,
@@ -188,6 +204,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Owns site cost-to-serve and service performance; balances cost, capacity, service and risk across functions; builds business cases.',
         target: 3,
       },
+      fm: {
+        text: 'Owns the facilities and maintenance budget (planned and reactive maintenance, automation upgrades, security and fire compliance); balances cost against risk, downtime and compliance exposure; builds business cases for capital investment.',
+        target: 3,
+      },
       exec: {
         text: 'Shapes the commercial model of the operation; drives network cost, service and capacity strategy; links operations to P&L and customer value.',
         target: 3,
@@ -222,6 +242,10 @@ export const COMPETENCIES: Competency[] = [
       },
       dcm: {
         text: 'Resolves complex, cross-functional site problems; takes calculated operational risks; builds a culture of improvement across the site.',
+        target: 3,
+      },
+      fm: {
+        text: 'Resolves complex building, plant, automation and security problems, often under time pressure; takes calculated risk decisions on repair-vs-replace and compliance trade-offs; drives a culture of preventive rather than reactive maintenance.',
         target: 3,
       },
       exec: {
@@ -262,6 +286,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Sets the site operating plan; aligns functions, capacity and labour to targets; plans for peak and contingencies.',
         target: 3,
       },
+      fm: {
+        text: 'Sets the site’s maintenance, automation-enhancement and compliance plan; prioritises planned maintenance against breakdowns and urgent fixes; plans ahead for peak, audits and certification deadlines.',
+        target: 3,
+      },
       exec: {
         text: 'Sets operational strategy and the plan to deliver it; aligns site/network resources and capability to longer-term goals.',
         target: 3,
@@ -296,6 +324,10 @@ export const COMPETENCIES: Competency[] = [
       },
       dcm: {
         text: 'Runs a site-wide performance system; cascades goals, reviews trends across functions, and builds accountability.',
+        target: 3,
+      },
+      fm: {
+        text: 'Runs a site-wide maintenance, security and compliance performance system; tracks uptime, incident and certification metrics; holds the maintenance team and contractors accountable to standard.',
         target: 3,
       },
       exec: {
@@ -336,6 +368,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Builds a strong site management team; manages talent and succession across functions; capitalises on collective strengths.',
         target: 3,
       },
+      fm: {
+        text: 'Builds a capable maintenance and security team (technicians, artisans, guarding staff) and manages key contractor relationships; plans talent and succession for critical technical skills; capitalises on the team’s strengths.',
+        target: 3,
+      },
       exec: {
         text: 'Builds leadership bench-strength across the network; drives talent and succession strategy; positions the right leaders in the right roles.',
         target: 3,
@@ -370,6 +406,10 @@ export const COMPETENCIES: Competency[] = [
       },
       dcm: {
         text: 'Builds leadership capability across the site; delegates real accountability; creates a supportive, high-trust management culture.',
+        target: 3,
+      },
+      fm: {
+        text: 'Builds technical and leadership capability across the maintenance and security team; delegates real accountability for plant and site areas; creates a supportive, safety-first culture.',
         target: 3,
       },
       exec: {
@@ -410,6 +450,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Builds a cohesive management team; resolves cross-functional conflict; partners with key internal and external stakeholders.',
         target: 3,
       },
+      fm: {
+        text: 'Partners effectively with DC and operations management, external contractors, auditors and emergency/regulatory authorities; resolves conflict between maintenance needs and operational priorities; builds trusted relationships across all of these.',
+        target: 3,
+      },
       exec: {
         text: 'Builds strategic partnerships across the business and externally (suppliers, customers, 3PLs); negotiates and influences at senior level.',
         target: 3,
@@ -446,6 +490,10 @@ export const COMPETENCIES: Competency[] = [
         text: 'Communicates the site’s direction compellingly; aligns all functions behind it; inspires the site through change.',
         target: 3,
       },
+      fm: {
+        text: 'Communicates maintenance, security and compliance priorities clearly to the site; aligns operations behind planned downtime and upgrade work; inspires the team through major projects and incidents alike.',
+        target: 3,
+      },
       exec: {
         text: 'Articulates a compelling vision for the operation; communicates persuasively to the business and external stakeholders; inspires at scale.',
         target: 3,
@@ -480,6 +528,10 @@ export const COMPETENCIES: Competency[] = [
       },
       dcm: {
         text: 'Thinks across the whole site and the medium term; weighs opportunities and risks; challenges the management team’s thinking.',
+        target: 3,
+      },
+      fm: {
+        text: 'Thinks across the whole site’s physical and security risk profile over the medium term; weighs investment, compliance and risk trade-offs; challenges the management team’s thinking on asset life-cycle and risk exposure.',
         target: 3,
       },
       exec: {
