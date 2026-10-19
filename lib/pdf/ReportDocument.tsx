@@ -124,7 +124,13 @@ const styles = StyleSheet.create({
   radarLegendDot: { width: 8, height: 8, borderRadius: 4, marginRight: 4 },
   radarLegendLabel: { fontSize: 8, color: '#475569' },
   threeSixtyNotice: { borderWidth: 1, borderColor: '#fde68a', backgroundColor: '#fffbeb', borderRadius: 6, padding: 8, marginBottom: 10 },
-  threeSixtyCard: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 6, padding: 10, flex: 1 },
+  // No flex:1 here deliberately: this View is already placed inside a
+  // flex:1 wrapper at each call site. Nesting flex:1 inside flex:1 breaks
+  // Yoga's column stacking for this node's Text children — they render
+  // overlapping on one line instead of stacked, rather than the outer
+  // sizing simply being redundant. Confirmed by isolating the exact
+  // structure in a standalone render; removing this flex:1 fixed it.
+  threeSixtyCard: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 6, padding: 10 },
   footer: {
     position: 'absolute',
     bottom: 24,
@@ -211,29 +217,36 @@ export function ReportDocument({ payload: d }: { payload: ReportPayload }) {
           </View>
         )}
 
-        <Text style={styles.sectionTitle}>Competency radar</Text>
-        <View style={styles.radarWrap} wrap={false}>
-          <RadarChart
-            rows={d.competencies.map((c) => ({
-              competencyKey: c.key,
-              name: c.name,
-              self: c.self,
-              manager: c.manager,
-              target: c.target,
-            }))}
-          />
-          <View style={styles.radarLegend}>
-            <View style={styles.radarLegendItem}>
-              <View style={[styles.radarLegendDot, { backgroundColor: '#cbd5e1' }]} />
-              <Text style={styles.radarLegendLabel}>Bar</Text>
-            </View>
-            <View style={styles.radarLegendItem}>
-              <View style={[styles.radarLegendDot, { backgroundColor: '#0ea5e9' }]} />
-              <Text style={styles.radarLegendLabel}>Self</Text>
-            </View>
-            <View style={styles.radarLegendItem}>
-              <View style={[styles.radarLegendDot, { backgroundColor: '#1d4ed8' }]} />
-              <Text style={styles.radarLegendLabel}>Manager</Text>
+        {/* wrap={false} on the OUTER view, not just radarWrap: without it, the
+            short heading alone fits in the remaining space on the page and
+            stays put while the ~460pt-tall chart below it gets pushed to the
+            next page on its own, orphaning the title. Grouping them in one
+            unbreakable block makes them move together. */}
+        <View wrap={false}>
+          <Text style={styles.sectionTitle}>Competency radar</Text>
+          <View style={styles.radarWrap}>
+            <RadarChart
+              rows={d.competencies.map((c) => ({
+                competencyKey: c.key,
+                name: c.name,
+                self: c.self,
+                manager: c.manager,
+                target: c.target,
+              }))}
+            />
+            <View style={styles.radarLegend}>
+              <View style={styles.radarLegendItem}>
+                <View style={[styles.radarLegendDot, { backgroundColor: '#cbd5e1' }]} />
+                <Text style={styles.radarLegendLabel}>Bar</Text>
+              </View>
+              <View style={styles.radarLegendItem}>
+                <View style={[styles.radarLegendDot, { backgroundColor: '#0ea5e9' }]} />
+                <Text style={styles.radarLegendLabel}>Self</Text>
+              </View>
+              <View style={styles.radarLegendItem}>
+                <View style={[styles.radarLegendDot, { backgroundColor: '#1d4ed8' }]} />
+                <Text style={styles.radarLegendLabel}>Manager</Text>
+              </View>
             </View>
           </View>
         </View>
