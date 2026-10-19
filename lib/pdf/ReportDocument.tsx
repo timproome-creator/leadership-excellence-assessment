@@ -1,6 +1,53 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportPayload } from '@/lib/email/report'
 import { BRAND } from '@/lib/brand'
+import { competency } from '@/lib/framework'
+import { RadarChart } from './RadarChart'
+
+const MIN_RATERS_FOR_AGGREGATE = 3
+
+// Mirrors components/assessment/ThreeSixtyPanel.tsx's CategoryCard — same
+// anonymity gate (n >= 3 before a group score shows), redrawn with react-pdf
+// primitives since that component is a 'use client' component and can't be
+// rendered inside the PDF tree directly.
+function ThreeSixtyCard({ title, group }: { title: string; group: ReportPayload['peerAggregate'] }) {
+  if (group.n === 0) return null
+
+  if (!group.sufficientN) {
+    return (
+      <View style={styles.threeSixtyCard}>
+        <Text style={{ fontSize: 10, fontWeight: 700 }}>{title}</Text>
+        <Text style={{ fontSize: 8, color: '#9ca3af', marginTop: 4 }}>
+          {group.n} of {MIN_RATERS_FOR_AGGREGATE} responses in. Scores show once the threshold is
+          met, to keep individual feedback anonymous.
+        </Text>
+      </View>
+    )
+  }
+
+  const rows = group.byCompetency
+    .map((r) => ({ name: competency(r.competencyKey).name, mean: r.mean }))
+    .filter((r): r is { name: string; mean: number } => r.mean !== null)
+    .sort((a, b) => a.mean - b.mean)
+
+  return (
+    <View style={styles.threeSixtyCard}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 10, fontWeight: 700 }}>{title}</Text>
+        <Text style={{ fontSize: 8, color: '#9ca3af' }}>{group.n} responses</Text>
+      </View>
+      <Text style={{ fontSize: 16, fontWeight: 700, marginTop: 4 }}>
+        {fmt(group.overallMean)} <Text style={{ fontSize: 8, fontWeight: 400, color: '#9ca3af' }}>group average</Text>
+      </Text>
+      {rows.map((r, i) => (
+        <View key={i} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+          <Text style={{ fontSize: 8, color: '#374151' }}>{r.name}</Text>
+          <Text style={{ fontSize: 8, color: '#6b7280' }}>{fmt(r.mean)}</Text>
+        </View>
+      ))}
+    </View>
+  )
+}
 
 // True PDF generation (not browser print-to-PDF). react-pdf builds a real,
 // paginated PDF document directly from data — its own layout engine, so page
@@ -71,6 +118,13 @@ const styles = StyleSheet.create({
   planName: { fontSize: 10, fontWeight: 700 },
   planScoreShift: { fontSize: 9, color: '#9ca3af' },
   planSubTitle: { fontSize: 8, fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 },
+  radarWrap: { alignItems: 'center', marginBottom: 6 },
+  radarLegend: { flexDirection: 'row', justifyContent: 'center', marginTop: 4 },
+  radarLegendItem: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 8 },
+  radarLegendDot: { width: 8, height: 8, borderRadius: 4, marginRight: 4 },
+  radarLegendLabel: { fontSize: 8, color: '#475569' },
+  threeSixtyNotice: { borderWidth: 1, borderColor: '#fde68a', backgroundColor: '#fffbeb', borderRadius: 6, padding: 8, marginBottom: 10 },
+  threeSixtyCard: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 6, padding: 10, flex: 1 },
   footer: {
     position: 'absolute',
     bottom: 24,
@@ -156,6 +210,33 @@ export function ReportDocument({ payload: d }: { payload: ReportPayload }) {
             ))}
           </View>
         )}
+
+        <Text style={styles.sectionTitle}>Competency radar</Text>
+        <View style={styles.radarWrap} wrap={false}>
+          <RadarChart
+            rows={d.competencies.map((c) => ({
+              competencyKey: c.key,
+              name: c.name,
+              self: c.self,
+              manager: c.manager,
+              target: c.target,
+            }))}
+          />
+          <View style={styles.radarLegend}>
+            <View style={styles.radarLegendItem}>
+              <View style={[styles.radarLegendDot, { backgroundColor: '#cbd5e1' }]} />
+              <Text style={styles.radarLegendLabel}>Bar</Text>
+            </View>
+            <View style={styles.radarLegendItem}>
+              <View style={[styles.radarLegendDot, { backgroundColor: '#0ea5e9' }]} />
+              <Text style={styles.radarLegendLabel}>Self</Text>
+            </View>
+            <View style={styles.radarLegendItem}>
+              <View style={[styles.radarLegendDot, { backgroundColor: '#1d4ed8' }]} />
+              <Text style={styles.radarLegendLabel}>Manager</Text>
+            </View>
+          </View>
+        </View>
 
         <Text style={styles.sectionTitle}>Competency-by-competency</Text>
         <View style={styles.headerRow}>
@@ -358,6 +439,28 @@ export function ReportDocument({ payload: d }: { payload: ReportPayload }) {
                 </Text>
               </View>
             ))}
+          </>
+        )}
+
+        {(d.peerAggregate.n > 0 || d.directReportAggregate.n > 0) && (
+          <>
+            <Text style={styles.sectionTitle}>360 feedback</Text>
+            <View style={styles.threeSixtyNotice} wrap={false}>
+              <Text style={{ fontSize: 8, color: '#92400e' }}>
+                Handle with care. These scores were given in confidence. In the development
+                conversation, share the themes they point to, not the raw numbers. In a small team,
+                quoting scores directly can expose who said what and put people at risk of comeback
+                for honest feedback.
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row' }} wrap={false}>
+              <View style={{ flex: 1, marginRight: 6 }}>
+                <ThreeSixtyCard title="Peers" group={d.peerAggregate} />
+              </View>
+              <View style={{ flex: 1, marginLeft: 6 }}>
+                <ThreeSixtyCard title="Direct reports" group={d.directReportAggregate} />
+              </View>
+            </View>
           </>
         )}
 

@@ -1,6 +1,7 @@
 import { GAP_CLASS_META } from '@/lib/scoring'
 import { buildExecutiveSummary } from '@/lib/executiveSummary'
 import type { AssessmentResult, CompetencyResult, RecommendationSet } from '@/lib/framework/types'
+import type { AggregateGroup } from '@/app/actions'
 import type { ReportPayload } from './report'
 
 // Single place that turns a scored assessment into the email report shape.
@@ -13,6 +14,8 @@ export function buildReportPayload(
   context: string,
   reportUrl: string,
   recs: RecommendationSet,
+  peerAggregate: AggregateGroup,
+  directReportAggregate: AggregateGroup,
 ): ReportPayload {
   const gap = (r: CompetencyResult) => (r.gapClass ? GAP_CLASS_META[r.gapClass] : null)
 
@@ -26,6 +29,7 @@ export function buildReportPayload(
     overallManager: result.overallManager,
     maturityLabel: result.maturityLabel,
     competencies: result.competencies.map((r) => ({
+      key: r.competency.key,
       name: r.competency.name,
       self: r.selfScore,
       manager: r.managerScore,
@@ -58,6 +62,8 @@ export function buildReportPayload(
       competencyName: b.competencyName,
       risk: b.risk,
     })),
+    peerAggregate,
+    directReportAggregate,
     recommendations: {
       immediate: recs.immediate,
       actions30Day: recs.actions30Day,

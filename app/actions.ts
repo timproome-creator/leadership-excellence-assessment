@@ -486,12 +486,23 @@ export async function submitRatings(
       const context = [row.site, row.business_unit, row.industry, row.country]
         .filter(Boolean)
         .join(' · ')
+      // A manager can add 360 raters from their console at any time, including
+      // before both self/manager finish, so some may already have responded by
+      // the moment this auto-send fires — fetch real state rather than assuming
+      // the 360 layer is always empty here.
+      const { data: raterData } = await service
+        .from('wlea_raters')
+        .select(RATER_COLUMNS)
+        .eq('assessment_id', row.id)
+      const raterRows = (raterData ?? []) as unknown as RaterRow[]
       const payload = buildReportPayload(
         result,
         row.subject_name ?? 'this leader',
         context,
         `${baseUrl()}/a/${row.manager_token}`,
         buildRecommendations(result),
+        buildAggregate(raterRows, 'peer'),
+        buildAggregate(raterRows, 'direct_report'),
       )
       await sendReportEmail({ to: row.creator_email, payload })
     }

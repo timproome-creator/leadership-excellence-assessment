@@ -148,7 +148,13 @@ function ManagerView({
   if (result && data.meta) {
     return (
       <div className="space-y-6">
-        <ResultsDashboard result={result} meta={data.meta} module={WLEA} />
+        <ResultsDashboard
+          result={result}
+          meta={data.meta}
+          module={WLEA}
+          peerAggregate={data.peerAggregate}
+          directReportAggregate={data.directReportAggregate}
+        />
         <ThreeSixtyPanel peerAggregate={data.peerAggregate} directReportAggregate={data.directReportAggregate} />
       </div>
     )

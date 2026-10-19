@@ -15,6 +15,7 @@ const P = BRAND.palette
 const tone = z.enum(['good', 'warn', 'bad', 'neutral'])
 
 const rowSchema = z.object({
+  key: z.string(),
   name: z.string(),
   self: z.number().nullable(),
   manager: z.number().nullable(),
@@ -22,6 +23,17 @@ const rowSchema = z.object({
   light: z.enum(['green', 'amber', 'red']).nullable(),
   gapLabel: z.string().nullable(),
   gapTone: tone.nullable(),
+})
+
+// Mirrors AggregateGroup (app/actions.ts) — duplicated here rather than
+// imported because this schema also validates the request body in
+// app/api/email-results/route.ts, so it needs to be a real runtime check,
+// not just a type.
+const aggregateGroupSchema = z.object({
+  n: z.number(),
+  sufficientN: z.boolean(),
+  overallMean: z.number().nullable(),
+  byCompetency: z.array(z.object({ competencyKey: z.string(), mean: z.number().nullable() })),
 })
 
 export const reportPayloadSchema = z.object({
@@ -57,6 +69,8 @@ export const reportPayloadSchema = z.object({
     }),
   ),
   businessRisks: z.array(z.object({ competencyName: z.string(), risk: z.string() })),
+  peerAggregate: aggregateGroupSchema,
+  directReportAggregate: aggregateGroupSchema,
   recommendations: z.object({
     immediate: z.array(z.object({ competencyName: z.string().nullable(), content: z.string() })),
     actions30Day: z.array(z.object({ competencyName: z.string().nullable(), content: z.string() })),

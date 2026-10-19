@@ -11,26 +11,11 @@ import {
   Tooltip,
 } from 'recharts'
 import type { CompetencyResult } from '@/lib/framework/types'
-
-const SHORT: Record<string, string> = {
-  integrity_trust: 'Integrity',
-  drive_resilience: 'Drive',
-  learning_development: 'Learning',
-  operational_knowledge: 'Ops Knowledge',
-  commercial_cost: 'Commercial',
-  problem_solving: 'Problem-Solving',
-  planning_prioritisation: 'Planning',
-  directing_monitoring: 'Directing',
-  building_team: 'Team Building',
-  developing_people: 'Developing',
-  collaboration_conflict: 'Collaboration',
-  communicating_inspiring: 'Communicating',
-  critical_strategic: 'Strategic',
-}
+import { COMPETENCY_SHORT_LABEL } from '@/lib/framework/shortLabels'
 
 export function CompetencyRadar({ results }: { results: CompetencyResult[] }) {
   const data = results.map((r) => ({
-    competency: SHORT[r.competency.key] ?? r.competency.name,
+    competency: COMPETENCY_SHORT_LABEL[r.competency.key] ?? r.competency.name,
     Self: r.selfScore,
     Manager: r.managerScore,
     Bar: r.target,

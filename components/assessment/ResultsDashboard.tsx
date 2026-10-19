@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import type { AssessmentModule } from '@/lib/framework/types'
 import type { AssessmentResult, CompetencyResult, TrafficLight } from '@/lib/framework/types'
+import type { AggregateGroup } from '@/app/actions'
 import { GAP_CLASS_META } from '@/lib/scoring'
 import { buildRecommendations } from '@/lib/recommendations/engine'
 import { buildExecutiveSummary } from '@/lib/executiveSummary'
@@ -47,10 +48,14 @@ function GapChip({ r }: { r: CompetencyResult }) {
 export function ResultsDashboard({
   result,
   meta,
+  peerAggregate,
+  directReportAggregate,
 }: {
   result: AssessmentResult
   meta: AssessmentMeta
   module: AssessmentModule
+  peerAggregate: AggregateGroup
+  directReportAggregate: AggregateGroup
 }) {
   const recs = useMemo(() => buildRecommendations(result), [result])
   const summary = useMemo(() => buildExecutiveSummary(result), [result])
@@ -67,8 +72,10 @@ export function ResultsDashboard({
         // pass, where window doesn't exist yet.
         typeof window !== 'undefined' ? window.location.href : '',
         recs,
+        peerAggregate,
+        directReportAggregate,
       ),
-    [result, meta, recs],
+    [result, meta, recs, peerAggregate, directReportAggregate],
   )
 
   // Generates a real PDF server-side (react-pdf), not a browser print-to-PDF
